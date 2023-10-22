@@ -43,7 +43,7 @@ SUPPORTED_VERSIONS.forEach {
 }
 
 val compiled = (project.findProperty("oraxen_compiled")?.toString() ?: "true").toBoolean()
-val pluginPath = project.findProperty("oraxen_plugin_path")?.toString()
+val pluginPath = project.findProperty("oraxen2_plugin_path")?.toString()
 val devPluginPath = project.findProperty("oraxen_dev_plugin_path")?.toString()
 val foliaPluginPath = project.findProperty("oraxen_folia_plugin_path")?.toString()
 val spigotPluginPath = project.findProperty("oraxen_spigot_plugin_path")?.toString()
@@ -77,6 +77,7 @@ allprojects {
         maven("https://repo.oraxen.com/releases")
         maven("https://repo.oraxen.com/snapshots")
         maven("https://jitpack.io") // JitPack
+        maven("https://repo.unnamed.team/repository/unnamed-public/") // Creative
 
         mavenLocal()
     }
@@ -218,7 +219,7 @@ if (pluginPath != null) {
             doLast { println("Copied to plugin directory $pluginPath") }
         }
 
-        // Create individual copy tasks for each destination
+        /*// Create individual copy tasks for each destination
         val copyToDevPluginPathTask = register<Copy>("copyToDevPluginPath") {
             dependsOn(shadowJar, jar)
             from(defaultPath)
@@ -238,14 +239,14 @@ if (pluginPath != null) {
             from(defaultPath)
             spigotPluginPath?.let { into(it) }
             doLast { println("Copied to plugin directory $spigotPluginPath") }
-        }
+        }*/
 
         // Make the build task depend on all individual copy tasks
         named<DefaultTask>("build").get().dependsOn(
-            copyJarTask,
+            copyJarTask/*,
             copyToDevPluginPathTask,
             copyToFoliaPluginPathTask,
-            copyToSpigotPluginPathTask
+            copyToSpigotPluginPathTask*/
         )
     }
 }

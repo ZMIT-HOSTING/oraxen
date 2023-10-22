@@ -19,8 +19,8 @@ import io.th0rgal.oraxen.items.ItemUpdater;
 import io.th0rgal.oraxen.mechanics.MechanicsManager;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureFactory;
 import io.th0rgal.oraxen.nms.NMSHandlers;
-import io.th0rgal.oraxen.pack.generation.ResourcePack;
-import io.th0rgal.oraxen.pack.upload.UploadManager;
+import io.th0rgal.oraxen.pack.OraxenPackGenerator;
+import io.th0rgal.oraxen.pack.OraxenPackServer;
 import io.th0rgal.oraxen.recipes.RecipesManager;
 import io.th0rgal.oraxen.sound.SoundManager;
 import io.th0rgal.oraxen.utils.AdventureUtils;
@@ -35,7 +35,6 @@ import io.th0rgal.oraxen.utils.inventories.InvManager;
 import io.th0rgal.oraxen.utils.logs.Logs;
 import io.th0rgal.protectionlib.ProtectionLib;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.minecraft.server.packs.resources.ResourceManager;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -43,6 +42,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
+import team.unnamed.creative.ResourcePack;
 
 import java.io.IOException;
 import java.util.jar.JarFile;
@@ -54,12 +54,13 @@ public class OraxenPlugin extends JavaPlugin {
     private ConfigsManager configsManager;
     private ResourcesManager resourceManager;
     private BukkitAudiences audience;
-    private UploadManager uploadManager;
     private FontManager fontManager;
     private HudManager hudManager;
     private SoundManager soundManager;
     private InvManager invManager;
     private ResourcePack resourcePack;
+    private OraxenPackGenerator packGenerator;
+    private OraxenPackServer packServer;
     private ClickActionManager clickActionManager;
     private ProtocolManager protocolManager;
     public static boolean supportsDisplayEntities;
@@ -109,8 +110,7 @@ public class OraxenPlugin extends JavaPlugin {
         pluginManager.registerEvents(new CustomArmorListener(), this);
         NMSHandlers.setup();
 
-        resourceManager = new ResourcesManager(this);
-        resourcePack = new ResourcePack();
+        //resourcePack = new ResourcePack();
         MechanicsManager.registerNativeMechanics();
         //CustomBlockData.registerListener(this); //Handle this manually
         hudManager = new HudManager(configsManager);
@@ -124,7 +124,11 @@ public class OraxenPlugin extends JavaPlugin {
         hudManager.registerTask();
         hudManager.parsedHudDisplays = hudManager.generateHudDisplays();
         pluginManager.registerEvents(new ItemUpdater(), this);
-        resourcePack.generate();
+        //resourcePack.generate();
+        packGenerator = new OraxenPackGenerator();
+        packGenerator.generatePack();
+        packServer = new OraxenPackServer();
+        packServer.start();
         RecipesManager.load(this);
         invManager = new InvManager();
         ArmorEquipEvent.registerListener(this);
@@ -189,14 +193,6 @@ public class OraxenPlugin extends JavaPlugin {
         return configsManager;
     }
 
-    public UploadManager getUploadManager() {
-        return uploadManager;
-    }
-
-    public void setUploadManager(final UploadManager uploadManager) {
-        this.uploadManager = uploadManager;
-    }
-
     public FontManager getFontManager() {
         return fontManager;
     }
@@ -230,7 +226,20 @@ public class OraxenPlugin extends JavaPlugin {
     }
 
     public ResourcePack getResourcePack() {
+        if (resourcePack == null) new OraxenPackGenerator().generatePack();
         return resourcePack;
+    }
+
+    public void setResourcePack(team.unnamed.creative.ResourcePack resourcePack) {
+        this.resourcePack = resourcePack;
+    }
+
+    public OraxenPackGenerator getPackGenerator() {
+        return packGenerator;
+    }
+
+    public OraxenPackServer getPackServer() {
+        return packServer;
     }
 
     public ClickActionManager getClickActionManager() {

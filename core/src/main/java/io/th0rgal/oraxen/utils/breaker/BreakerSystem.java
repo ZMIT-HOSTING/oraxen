@@ -191,7 +191,7 @@ public class BreakerSystem {
     };
 
     public BreakerSystem() {
-        protocolManager = OraxenPlugin.get().getProtocolManager();
+        protocolManager = OraxenPlugin.get().protocolManager();
     }
 
     private boolean blockDamageEventCancelled(Block block, Player player) {
@@ -257,7 +257,7 @@ public class BreakerSystem {
     }
 
     private BlockSounds getBlockSounds(Block block) {
-        ConfigurationSection soundSection = OraxenPlugin.get().getConfigsManager().getMechanics().getConfigurationSection("custom_block_sounds");
+        ConfigurationSection soundSection = OraxenPlugin.get().configsManager().getMechanics().getConfigurationSection("custom_block_sounds");
         if (soundSection == null) return null;
         switch (block.getType()) {
             case NOTE_BLOCK -> {
@@ -285,7 +285,7 @@ public class BreakerSystem {
     }
 
     private String getSound(Block block) {
-        ConfigurationSection soundSection = OraxenPlugin.get().getConfigsManager().getMechanics().getConfigurationSection("custom_block_sounds");
+        ConfigurationSection soundSection = OraxenPlugin.get().configsManager().getMechanics().getConfigurationSection("custom_block_sounds");
         if (soundSection == null) return null;
         BlockSounds sounds = getBlockSounds(block);
         if (sounds == null) return null;

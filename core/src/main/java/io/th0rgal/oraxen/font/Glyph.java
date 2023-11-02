@@ -238,7 +238,7 @@ public class Glyph {
      */
     public static JsonObject parsePlaceholders(JsonElement element) {
         Component component = AdventureUtils.GSON_SERIALIZER.deserializeFromTree(element);
-        for (Glyph glyph : OraxenPlugin.get().getFontManager().getGlyphs()) {
+        for (Glyph glyph : OraxenPlugin.get().fontManager().getGlyphs()) {
             Component glyphComponent = Component.text().content(glyph.getCharacter()).color(NamedTextColor.WHITE).build();
             // Format all non-escaped glyph-tags and raw unicodes
             component = component.replaceText(TextReplacementConfig.builder()

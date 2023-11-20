@@ -12,7 +12,7 @@ tasks {
     build.get().dependsOn(shadowJar)
 }
 
-val creativeVersion = "1.2.2-SNAPSHOT"
+val creativeVersion = "1.3.0"
 
 dependencies {
     val actionsVersion = "1.0.0-SNAPSHOT"
@@ -24,24 +24,23 @@ dependencies {
     implementation("com.jeff_media:MorePersistentDataTypes:2.4.0")
     implementation("com.jeff-media:persistent-data-serializer:1.0")
     implementation("gs.mclo:java:2.2.1")
-    implementation("com.ticxo:PlayerAnimator:R1.2.8")
     implementation("org.jetbrains:annotations:24.0.1") { isTransitive = false }
     implementation("team.unnamed:creative-api:$creativeVersion")
     implementation("team.unnamed:creative-serializer-minecraft:$creativeVersion")
     implementation("team.unnamed:creative-server:$creativeVersion")
-
     implementation("me.gabytm.util:actions-spigot:$actionsVersion") { exclude(group = "com.google.guava") }
+
     paperweight.paperDevBundle("1.20.2-R0.1-SNAPSHOT")
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 tasks {
     shadowJar {
         relocate("team.unnamed", "io.th0rgal.oraxen.shaded.unnamed")
     }
-}
-
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 publishing {

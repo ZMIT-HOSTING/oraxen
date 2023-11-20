@@ -182,6 +182,10 @@ public class OraxenPlugin extends JavaPlugin {
         return configsManager;
     }
 
+    public ResourcesManager resourceManager() {
+        return resourceManager;
+    }
+
     public FontManager fontManager() {
         return fontManager;
     }

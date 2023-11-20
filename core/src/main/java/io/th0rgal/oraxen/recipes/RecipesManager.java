@@ -43,7 +43,7 @@ public class RecipesManager {
         if (!recipesFolder.exists()) {
             recipesFolder.mkdirs();
             if (Settings.GENERATE_DEFAULT_CONFIGS.toBool())
-                OraxenPlugin.get().getResourceManager().extractConfigsInFolder("recipes", "yml");
+                OraxenPlugin.get().resourceManager().extractConfigsInFolder("recipes", "yml");
             else try {
                 new File(recipesFolder, "furnace.yml").createNewFile();
                 new File(recipesFolder, "shaped.yml").createNewFile();
@@ -76,7 +76,7 @@ public class RecipesManager {
         if (!recipesFolder.exists()) {
             recipesFolder.mkdirs();
             if (Settings.GENERATE_DEFAULT_CONFIGS.toBool())
-                OraxenPlugin.get().getResourceManager().extractConfigsInFolder("recipes", "yml");
+                OraxenPlugin.get().resourceManager().extractConfigsInFolder("recipes", "yml");
         }
         registerAllConfigRecipesFromFolder(recipesFolder);
         RecipesEventsManager.get().registerEvents();

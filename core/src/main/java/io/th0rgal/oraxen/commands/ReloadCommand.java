@@ -29,7 +29,7 @@ public class ReloadCommand {
     public static void reloadItems(@Nullable CommandSender sender) {
         Message.RELOAD.send(sender, AdventureUtils.tagResolver("reloaded", "items"));
         OraxenItems.loadItems();
-        OraxenPlugin.get().getInvManager().regen();
+        OraxenPlugin.get().invManager().regen();
         Bukkit.getPluginManager().callEvent(new OraxenItemsLoadedEvent());
 
         if (Settings.UPDATE_ITEMS.toBool() && Settings.UPDATE_ITEMS_ON_RELOAD.toBool()) {

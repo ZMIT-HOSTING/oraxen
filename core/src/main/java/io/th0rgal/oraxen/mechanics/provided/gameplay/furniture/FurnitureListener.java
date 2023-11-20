@@ -50,13 +50,6 @@ import static io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureM
 
 public class FurnitureListener implements Listener {
 
-    private final MechanicFactory factory;
-
-
-    public FurnitureListener(final MechanicFactory factory) {
-        this.factory = factory;
-    }
-
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onItemFrameRotate(PlayerInteractEntityEvent event) {
         if (!(event.getRightClicked() instanceof ItemFrame frame)) return;

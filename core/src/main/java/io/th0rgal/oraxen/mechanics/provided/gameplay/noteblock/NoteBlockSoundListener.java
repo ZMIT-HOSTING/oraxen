@@ -36,7 +36,7 @@ public class NoteBlockSoundListener implements Listener {
 
     @EventHandler
     public void onWorldUnload(WorldUnloadEvent event) {
-        for (Map.Entry<Location, BukkitTask> entry : breakerPlaySound.entrySet()) {
+        for (Map.Entry<Location, WrappedTask> entry : breakerPlaySound.entrySet()) {
             if (entry.getKey().isWorldLoaded() || entry.getValue().isCancelled()) continue;
             entry.getValue().cancel();
             breakerPlaySound.remove(entry.getKey());

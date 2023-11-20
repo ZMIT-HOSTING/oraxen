@@ -22,7 +22,7 @@ import java.util.*;
 
 public class ItemsView {
 
-    private final YamlConfiguration settings = OraxenPlugin.get().getResourceManager().getSettings();
+    private final YamlConfiguration settings = OraxenPlugin.get().resourceManager().settings();
     PaginatedGui mainGui;
 
     public PaginatedGui create() {

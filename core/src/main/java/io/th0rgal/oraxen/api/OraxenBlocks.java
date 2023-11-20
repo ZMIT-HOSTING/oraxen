@@ -262,11 +262,11 @@ public class OraxenBlocks {
             block.getRelative(BlockFace.UP).setType(Material.AIR, false);
         block.setType(Material.AIR, false);
         final Block blockAbove = block.getRelative(BlockFace.UP);
-        Bukkit.getScheduler().runTaskLater(OraxenPlugin.get(), () -> {
-            StringBlockMechanicListener.fixClientsideUpdate(block.getLocation());
-            if (blockAbove.getType() == Material.TRIPWIRE)
-                removeStringBlock(blockAbove, player);
-        }, 1L);
+        OraxenPlugin.foliaLib.getImpl().runLater(() -> {
+                    StringBlockMechanicListener.fixClientsideUpdate(block.getLocation());
+                    if (blockAbove.getType() == Material.TRIPWIRE)
+                        removeStringBlock(blockAbove, player);
+                }, 1L);
     }
 
     /**

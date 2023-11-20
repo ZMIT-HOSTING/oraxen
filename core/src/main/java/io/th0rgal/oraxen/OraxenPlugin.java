@@ -2,7 +2,8 @@ package io.th0rgal.oraxen;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.ticxo.playeranimator.PlayerAnimatorImpl;
+import com.tcoded.folialib.FoliaLib;
+import com.tcoded.folialib.impl.ServerImplementation;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import io.th0rgal.oraxen.api.OraxenItems;
@@ -16,11 +17,9 @@ import io.th0rgal.oraxen.config.SettingsUpdater;
 import io.th0rgal.oraxen.font.FontManager;
 import io.th0rgal.oraxen.font.packets.InventoryPacketListener;
 import io.th0rgal.oraxen.font.packets.TitlePacketListener;
-import io.th0rgal.oraxen.gestures.GestureManager;
 import io.th0rgal.oraxen.hud.HudManager;
 import io.th0rgal.oraxen.items.ItemUpdater;
 import io.th0rgal.oraxen.mechanics.MechanicsManager;
-import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureFactory;
 import io.th0rgal.oraxen.nms.NMSHandlers;
 import io.th0rgal.oraxen.new_pack.PackGenerator;
 import io.th0rgal.oraxen.new_pack.PackServer;
@@ -32,7 +31,6 @@ import io.th0rgal.oraxen.utils.OS;
 import io.th0rgal.oraxen.utils.VersionUtil;
 import io.th0rgal.oraxen.utils.actions.ClickActionManager;
 import io.th0rgal.oraxen.utils.armorequipevent.ArmorEquipEvent;
-import io.th0rgal.oraxen.utils.breaker.BreakerSystem;
 import io.th0rgal.oraxen.utils.customarmor.CustomArmorListener;
 import io.th0rgal.oraxen.utils.inventories.InvManager;
 import io.th0rgal.oraxen.utils.logs.Logs;
@@ -49,12 +47,12 @@ import team.unnamed.creative.ResourcePack;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.function.Consumer;
 import java.util.jar.JarFile;
 
 public class OraxenPlugin extends JavaPlugin {
 
     private static OraxenPlugin oraxen;
-    private static GestureManager gestureManager;
     private ConfigsManager configsManager;
     private BukkitAudiences audience;
     private FontManager fontManager;
@@ -66,6 +64,7 @@ public class OraxenPlugin extends JavaPlugin {
     private PackServer packServer;
     private ClickActionManager clickActionManager;
     private ProtocolManager protocolManager;
+    public static FoliaLib foliaLib;
     public static boolean supportsDisplayEntities;
 
     public OraxenPlugin() {
@@ -93,24 +92,25 @@ public class OraxenPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         VersionUtil.isPremium();
+        foliaLib = new FoliaLib(this);
         CommandAPI.onEnable();
         ProtectionLib.init(this);
         audience = BukkitAudiences.create(this);
         reloadConfigs();
-        if (!VersionUtil.isSupportedVersionOrNewer("1.20.2")) PlayerAnimatorImpl.initialize(this);
         clickActionManager = new ClickActionManager(this);
         supportsDisplayEntities = VersionUtil.isSupportedVersionOrNewer("1.19.4");
         hudManager = new HudManager(configsManager);
         fontManager = new FontManager(configsManager);
         soundManager = new SoundManager(configsManager.getSound());
-        gestureManager = new GestureManager();
 
         if (Settings.KEEP_UP_TO_DATE.toBool())
             new SettingsUpdater().handleSettingsUpdate();
         final PluginManager pluginManager = Bukkit.getPluginManager();
         if (pluginManager.isPluginEnabled("ProtocolLib")) {
             protocolManager = ProtocolLibrary.getProtocolManager();
-            new BreakerSystem().registerListener();
+            // Swapped for individual BlockDamageListener's
+            /*if (!VersionUtil.isFoliaServer()) new BreakerSystem().registerListener();
+            else Logs.logError("BreakerSystem is not supported on Folia servers yet");*/
             if (Settings.FORMAT_INVENTORY_TITLES.toBool())
                 protocolManager.addPacketListener(new InventoryPacketListener());
             protocolManager.addPacketListener(new TitlePacketListener());
@@ -134,28 +134,24 @@ public class OraxenPlugin extends JavaPlugin {
 
         packGenerator.generatePack();
         packServer = new PackServer();
-        packServer.start();
         postLoading();
-        try {
-            Message.PLUGIN_LOADED.log(AdventureUtils.tagResolver("os", OS.getOs().getPlatformName()));
-        } catch (Exception ignore) {
-        }
+
         CompatibilitiesManager.enableNativeCompatibilities();
         if (VersionUtil.isCompiled()) NoticeUtils.compileNotice();
         if (VersionUtil.isLeaked()) NoticeUtils.leakNotice();
+        if (VersionUtil.isFoliaServer()) NoticeUtils.foliaNotice();
     }
 
     private void postLoading() {
         new Metrics(this, 5371);
-        Bukkit.getScheduler().runTask(this, () ->
-                Bukkit.getPluginManager().callEvent(new OraxenItemsLoadedEvent()));
+        foliaLib.getImpl().runNextTick((w) -> Bukkit.getPluginManager().callEvent(new OraxenItemsLoadedEvent()));
     }
 
     @Override
     public void onDisable() {
         if (packServer != null) packServer.stop();
         unregisterListeners();
-        FurnitureFactory.unregisterEvolution();
+        foliaLib.getImpl().cancelAllTasks();
         for (Player player : Bukkit.getOnlinePlayers())
             if (NMSHandlers.getHandler() != null && Settings.NMS_GLYPHS.toBool())
                 NMSHandlers.getHandler().uninject(player);
@@ -177,10 +173,6 @@ public class OraxenPlugin extends JavaPlugin {
 
     public ProtocolManager protocolManager() {
         return protocolManager;
-    }
-
-    public GestureManager gestureManager() {
-        return gestureManager;
     }
 
     public BukkitAudiences audience() {

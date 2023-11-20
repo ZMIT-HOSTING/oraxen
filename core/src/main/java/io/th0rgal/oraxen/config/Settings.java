@@ -1,7 +1,9 @@
 package io.th0rgal.oraxen.config;
 
 import io.th0rgal.oraxen.OraxenPlugin;
+import io.th0rgal.oraxen.utils.AdventureUtils;
 import io.th0rgal.oraxen.utils.logs.Logs;
+import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -41,7 +43,6 @@ public enum Settings {
 
     DISABLE_LEATHER_REPAIR_CUSTOM("CustomArmor.disable_leather_repair"),
     CUSTOM_ARMOR_SHADER_TYPE("CustomArmor.shader_type"),
-    GESTURES_ENABLED("Gestures.enabled"),
 
     // ItemUpdater
     UPDATE_ITEMS("ItemUpdater.update_items"),
@@ -156,6 +157,10 @@ public enum Settings {
 
     public Boolean toBool() {
         return (Boolean) getValue();
+    }
+
+    public Component toComponent() {
+        return AdventureUtils.MINI_MESSAGE.deserialize(getValue().toString());
     }
 
     public List<String> toStringList() {

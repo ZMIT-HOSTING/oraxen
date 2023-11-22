@@ -1,8 +1,7 @@
-package io.th0rgal.oraxen.commands;
+package io.th0rgal.oraxen.new_commands;
 
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.ArgumentSuggestions;
-import dev.jorel.commandapi.arguments.TextArgument;
+import cloud.commandframework.Command;
+import cloud.commandframework.arguments.standard.StringArgument;
 import io.th0rgal.oraxen.OraxenPlugin;
 import io.th0rgal.oraxen.api.OraxenFurniture;
 import io.th0rgal.oraxen.api.OraxenItems;
@@ -25,6 +24,33 @@ import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Nullable;
 
 public class ReloadCommand {
+
+    public static Command.Builder<CommandSender> reloadCommand(Command.Builder<CommandSender> builder) {
+        return builder.literal("reload", "rl")
+                .permission("oraxen.command.reload")
+                .
+                .argument(StringArgument.of("reloadType"))
+                .handler(context -> {
+                    String type = context.get("reloadType");
+                    CommandSender sender = context.getSender();
+                    switch (type.toUpperCase()) {
+                        case "HUD" -> reloadHud(sender);
+                        case "ITEMS" -> reloadItems(sender);
+                        case "PACK" -> reloadPack(sender);
+                        case "RECIPES" -> reloadRecipes(sender);
+                        case "CONFIGS" -> OraxenPlugin.get().reloadConfigs();
+                        default -> {
+                            MechanicsManager.unloadListeners();
+                            MechanicsManager.registerNativeMechanics();
+                            OraxenPlugin.get().reloadConfigs();
+                            reloadItems(sender);
+                            reloadPack(sender);
+                            reloadHud(sender);
+                            reloadRecipes(sender);
+                        }
+                    }
+                });
+    }
 
     public static void reloadItems(@Nullable CommandSender sender) {
         Message.RELOAD.send(sender, AdventureUtils.tagResolver("reloaded", "items"));
@@ -75,34 +101,4 @@ public class ReloadCommand {
         Message.RELOAD.send(sender, AdventureUtils.tagResolver("reloaded", "recipes"));
         RecipesManager.reload();
     }
-
-    CommandAPICommand getReloadCommand() {
-        return new CommandAPICommand("reload")
-                .withAliases("rl")
-                .withPermission("oraxen.command.reload")
-                .withArguments(new TextArgument("type").replaceSuggestions(
-                        ArgumentSuggestions.strings("items", "pack", "hud", "recipes", "messages", "all")))
-                .executes((sender, args) -> {
-                    switch (((String) args.get("type")).toUpperCase()) {
-                        case "HUD" -> reloadHud(sender);
-                        case "ITEMS" -> reloadItems(sender);
-                        case "PACK" -> reloadPack(sender);
-                        case "RECIPES" -> reloadRecipes(sender);
-                        case "CONFIGS" -> OraxenPlugin.get().reloadConfigs();
-                        default -> {
-                            MechanicsManager.unloadListeners();
-                            MechanicsManager.registerNativeMechanics();
-                            OraxenPlugin.get().reloadConfigs();
-                            reloadItems(sender);
-                            reloadPack(sender);
-                            reloadHud(sender);
-                            reloadRecipes(sender);
-                        }
-                    }
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        OraxenPlugin.get().fontManager().sendGlyphTabCompletion(player);
-                    }
-                });
-    }
-
 }

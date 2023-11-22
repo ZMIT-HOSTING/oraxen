@@ -1,18 +1,17 @@
-package io.th0rgal.oraxen.commands;
+package io.th0rgal.oraxen.new_commands;
 
-import dev.jorel.commandapi.CommandAPICommand;
+import cloud.commandframework.Command;
 import gs.mclo.java.APIResponse;
 import gs.mclo.java.Log;
 import gs.mclo.java.MclogsAPI;
 import io.th0rgal.oraxen.OraxenPlugin;
 import io.th0rgal.oraxen.config.Settings;
 import io.th0rgal.oraxen.utils.logs.Logs;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -20,14 +19,12 @@ import java.nio.file.Path;
 
 public class LogDumpCommand {
 
-    CommandAPICommand getLogDumpCommand() {
-        return new CommandAPICommand("dump_log")
-                .withPermission("oraxen.command.dumplog")
-                .executes((sender, args) -> {
+    public static Command.Builder<CommandSender> logDumpCommand(Command.Builder<CommandSender> builder) {
+        return builder.literal("logdump")
+                .permission("oraxen.command.logdump")
+                .handler(context -> {
                     String logfile;
-
                     try {
-                        Logs.logError(OraxenPlugin.get().getDataFolder().getAbsoluteFile().getParentFile().getParentFile().toPath().resolve("logs/latest.log").toString());
                         Path path = OraxenPlugin.get().getDataFolder().getAbsoluteFile().getParentFile().getParentFile().toPath().resolve("logs/latest.log");
                         logfile = Files.readString(path);
                     } catch (Exception e) {
@@ -50,11 +47,9 @@ public class LogDumpCommand {
                         }
                     }
                 });
-
-
     }
 
-    private String postToPasteBin(String text) throws IOException {
+    private static String postToPasteBin(String text) throws IOException {
         byte[] postData = text.getBytes(StandardCharsets.UTF_8);
         int postDataLength = postData.length;
 
@@ -96,5 +91,4 @@ public class LogDumpCommand {
 
         return response;
     }
-
 }

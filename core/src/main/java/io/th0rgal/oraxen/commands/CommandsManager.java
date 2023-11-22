@@ -30,16 +30,11 @@ public class CommandsManager {
                         (new UpdateCommand()).getUpdateCommand(),
                         (new RepairCommand()).getRepairCommand(),
                         (new RecipesCommand()).getRecipesCommand(),
-                        (new ReloadCommand()).getReloadCommand(),
                         (new DebugCommand()).getDebugCommand(),
                         (new ModelDataCommand()).getHighestModelDataCommand(),
                         (new GlyphCommand()).getGlyphCommand(),
-                        (new GlyphInfoCommand()).getGlyphInfoCommand(),
-                        (new ItemInfoCommand()).getItemInfoCommand(),
                         (new BlockInfoCommand()).getBlockInfoCommand(),
                         (new HudCommand()).getHudCommand(),
-                        (new LogDumpCommand().getLogDumpCommand()),
-                        (new VersionCommand()).getVersionCommand(),
                         (new AdminCommands()).getAdminCommand(),
                         (new NewPackCommand()).getNewPackCommand())
                 .executes((sender, args) -> {

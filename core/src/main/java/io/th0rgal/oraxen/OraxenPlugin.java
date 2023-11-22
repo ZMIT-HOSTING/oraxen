@@ -1,5 +1,6 @@
 package io.th0rgal.oraxen;
 
+import cloud.commandframework.bukkit.BukkitCommandManager;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.tcoded.folialib.FoliaLib;
@@ -16,6 +17,7 @@ import io.th0rgal.oraxen.font.packets.TitlePacketListener;
 import io.th0rgal.oraxen.hud.HudManager;
 import io.th0rgal.oraxen.items.ItemUpdater;
 import io.th0rgal.oraxen.mechanics.MechanicsManager;
+import io.th0rgal.oraxen.new_commands.CommandManager;
 import io.th0rgal.oraxen.new_pack.PackGenerator;
 import io.th0rgal.oraxen.new_pack.PackServer;
 import io.th0rgal.oraxen.nms.NMSHandlers;
@@ -32,6 +34,7 @@ import io.th0rgal.protectionlib.ProtectionLib;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
@@ -58,6 +61,7 @@ public class OraxenPlugin extends JavaPlugin {
     private PackServer packServer;
     private ClickActionManager clickActionManager;
     private ProtocolManager protocolManager;
+    private CommandManager commandManager;
     public static FoliaLib foliaLib;
     public static boolean supportsDisplayEntities;
 
@@ -80,17 +84,16 @@ public class OraxenPlugin extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        CommandAPI.onLoad(new CommandAPIBukkitConfig(this).silentLogs(true));
     }
 
     @Override
     public void onEnable() {
         VersionUtil.isPremium();
         foliaLib = new FoliaLib(this);
-        CommandAPI.onEnable();
         ProtectionLib.init(this);
         audience = BukkitAudiences.create(this);
         reloadConfigs();
+        resourceManager = new ResourcesManager(this);
         clickActionManager = new ClickActionManager(this);
         supportsDisplayEntities = VersionUtil.isSupportedVersionOrNewer("1.19.4");
         hudManager = new HudManager(configsManager);
@@ -124,7 +127,7 @@ public class OraxenPlugin extends JavaPlugin {
         RecipesManager.load(this);
         invManager = new InvManager();
         ArmorEquipEvent.registerListener(this);
-        new CommandsManager().loadCommands();
+        commandManager = new CommandManager(this);
 
         packGenerator.generatePack();
         packServer = new PackServer();

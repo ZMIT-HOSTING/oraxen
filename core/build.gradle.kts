@@ -29,6 +29,7 @@ dependencies {
     implementation("team.unnamed:creative-serializer-minecraft:$creativeVersion")
     implementation("team.unnamed:creative-server:$creativeVersion")
     implementation("me.gabytm.util:actions-spigot:$actionsVersion") { exclude(group = "com.google.guava") }
+    implementation("cloud.commandframework:cloud-paper:1.8.4")
 
     paperweight.paperDevBundle("1.20.2-R0.1-SNAPSHOT")
 }
@@ -40,6 +41,7 @@ java {
 tasks {
     shadowJar {
         relocate("team.unnamed", "io.th0rgal.oraxen.shaded.unnamed")
+        relocate("cloud.commandframework", "io.th0rgal.oraxen.shaded.cloud.commandframework")
     }
 }
 

@@ -1,38 +1,39 @@
-package io.th0rgal.oraxen.commands;
+package io.th0rgal.oraxen.new_commands;
 
-import dev.jorel.commandapi.CommandAPICommand;
+import cloud.commandframework.Command;
+import cloud.commandframework.arguments.standard.StringArgument;
 import io.th0rgal.oraxen.OraxenPlugin;
 import io.th0rgal.oraxen.config.Message;
 import io.th0rgal.oraxen.config.Settings;
 import io.th0rgal.oraxen.font.Glyph;
 import io.th0rgal.oraxen.utils.AdventureUtils;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class GlyphCommand {
+public class EmojisCommand {
 
-    public CommandAPICommand getGlyphCommand() {
-        List<Glyph> emojiList = OraxenPlugin.get().fontManager().emojis().stream().toList();
-
-        return new CommandAPICommand("emojis")
-                .withPermission("oraxen.command.emojis").withPermission("oraxen.command.emoji")
-                .executes((sender, args) -> {
-                    Player player = ((Player) sender);
+    public static Command.Builder<CommandSender> emojiCommand(Command.Builder<CommandSender> builder) {
+        return builder.literal("emojis")
+                .permission("oraxen.command.emojis")
+                .senderType(Player.class)
+                .handler(context -> {
+                    Player player = (Player) context.getSender();
                     boolean onlyShowPermissable = Settings.SHOW_PERMISSION_EMOJIS.toBool();
-
-                    List<Glyph> emojis = !onlyShowPermissable ? emojiList
-                            : emojiList.stream().filter(glyph -> glyph.hasPermission(player)).toList();
+                    List<Glyph> emojiList = OraxenPlugin.get().fontManager().emojis().stream().toList();
+                    emojiList = !onlyShowPermissable ? emojiList : emojiList.stream().filter(glyph -> glyph.hasPermission(player)).toList();
                     Component pages = Component.empty();
                     int s;
 
-                    if (emojis.isEmpty()) {
+                    if (emojiList.isEmpty()) {
                         Message.NO_EMOJIS.send(player);
                         return;
                     }
@@ -41,8 +42,8 @@ public class GlyphCommand {
                     for (int p = 0; p < 50; p++) {
                         for (int i = 0; i < 256; i++) {
                             s = p * 256 + i + 1;
-                            if (emojis.size() < s) break pageLoop;
-                            Glyph emoji = (emojis.get(p * 256 + i));
+                            if (emojiList.size() < s) break pageLoop;
+                            Glyph emoji = (emojiList.get(p * 256 + i));
                             String[] placeholders = emoji.placeholders();
                             String finalString = "";
                             String permissionMessage = "";
@@ -55,7 +56,7 @@ public class GlyphCommand {
 
                                 if (!onlyShowPermissable) {
                                     permissionMessage += emoji.hasPermission(player) ?
-                                            ("\n" + ChatColor.GREEN + "Permitted") : ("\n" + ChatColor.RED + "No Permission");
+                                            ("\n" + "<green>Permitted") : ("\n" + "<red>No Permission");
                                 }
                             }
 

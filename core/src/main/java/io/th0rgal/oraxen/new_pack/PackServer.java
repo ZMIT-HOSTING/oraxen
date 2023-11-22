@@ -40,11 +40,11 @@ public class PackServer {
 
     public void start() {
         Logs.logSuccess("Started Oraxen pack-server...");
-        packServer.start();
+        if (packServer != null) packServer.start();
     }
 
     public void stop() {
         Logs.logError("Stopping Oraxen pack-server...");
-        packServer.stop(0);
+        if (packServer != null) packServer.stop(0);
     }
 }

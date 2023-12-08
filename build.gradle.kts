@@ -49,7 +49,7 @@ val devPluginPath = project.findProperty("oraxen_dev_plugin_path")?.toString()
 val foliaPluginPath = project.findProperty("oraxen_folia_plugin_path")?.toString()
 val spigotPluginPath = project.findProperty("oraxen_spigot_plugin_path")?.toString()
 val pluginVersion: String by project
-val commandApiVersion = "9.2.0"
+val commandApiVersion = "9.3.0-SNAPSHOT"
 val adventureVersion = "4.14.0"
 val platformVersion = "4.3.1"
 group = "io.th0rgal"
@@ -102,7 +102,8 @@ allprojects {
         compileOnly("com.ticxo.modelengine:ModelEngine:R4.0.1")
         compileOnly("com.ticxo.modelengine:api:R3.1.8")
         compileOnly(files("../libs/compile/BSP.jar"))
-        compileOnly("dev.jorel:commandapi-bukkit-shade:$commandApiVersion")
+        implementation(files("../libs/compile/CommandAPI-9.3.0-SNAPSHOT.jar"))
+        //compileOnly("dev.jorel:commandapi-bukkit-shade:$commandApiVersion")
         compileOnly("io.lumine:MythicLib:1.1.6")
         compileOnly("net.Indyuce:MMOItems:6.7.3")
         compileOnly("org.joml:joml:1.10.5") // Because pre 1.19.4 api does not have this in the server-jar
@@ -159,6 +160,7 @@ tasks {
         relocate("org.jetbrains.annotations", "io.th0rgal.oraxen.shaded.jetbrains.annotations")
         relocate("com.udojava.evalex", "io.th0rgal.oraxen.shaded.evalex")
         relocate("com.ticxo.playeranimator", "io.th0rgal.oraxen.shaded.playeranimator")
+        relocate("dev.jorel.commandapi", "io.th0rgal.oraxen.shaded.commandapi")
 
         manifest {
             attributes(
@@ -198,7 +200,7 @@ bukkit {
     libraries = listOf(
         "org.springframework:spring-expression:6.0.6",
         "org.apache.httpcomponents:httpmime:4.5.13",
-        "dev.jorel:commandapi-bukkit-shade:$commandApiVersion",
+        //"dev.jorel:commandapi-bukkit-shade:$commandApiVersion",
         "org.joml:joml:1.10.5",
         "net.kyori:adventure-text-minimessage:$adventureVersion",
         "net.kyori:adventure-text-serializer-plain:$adventureVersion",

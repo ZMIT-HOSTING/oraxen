@@ -2,7 +2,6 @@ package io.th0rgal.oraxen.mechanics.provided.misc.food;
 
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.api.events.OraxenItemsLoadedEvent;
-import io.th0rgal.oraxen.utils.logs.Logs;
 import org.bukkit.GameMode;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -24,8 +23,7 @@ public class FoodMechanicListener implements Listener {
         for (String itemID : factory.getItems()) {
             FoodMechanic foodMechanic = (FoodMechanic) factory.getMechanic(itemID);
             ConfigurationSection replacementSection = foodMechanic.getSection().getConfigurationSection("replacement");
-            if (replacementSection == null) continue;
-            foodMechanic.registerReplacement(replacementSection);
+            if (replacementSection != null) foodMechanic.registerReplacement(replacementSection);
         }
     }
 
@@ -39,9 +37,8 @@ public class FoodMechanicListener implements Listener {
         event.setCancelled(true);
 
         if (player.getGameMode() != GameMode.CREATIVE) {
-            if (mechanic.hasReplacement())
-                inventory.setItemInMainHand(mechanic.getReplacement());
-            else inventory.getItemInMainHand().setAmount(inventory.getItemInMainHand().getAmount() - 1);
+            inventory.getItemInMainHand().setAmount(inventory.getItemInMainHand().getAmount() - 1);
+            if (mechanic.hasReplacement()) inventory.addItem(mechanic.getReplacement());
 
             if (mechanic.hasEffects() && Math.random() <= mechanic.getEffectProbability())
                 player.addPotionEffects(mechanic.getEffects());

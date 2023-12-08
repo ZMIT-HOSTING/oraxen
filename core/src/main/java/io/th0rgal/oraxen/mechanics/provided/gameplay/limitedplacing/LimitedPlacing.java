@@ -90,7 +90,7 @@ public class LimitedPlacing {
         Block blockBelow = placedBlock.getRelative(BlockFace.DOWN);
         Block blockAbove = placedBlock.getRelative(BlockFace.UP);
 
-        if (wall && block.getType().isSolid()) return false;
+        if (wall && block.getType().isSolid() && blockFace.getModY() == 0) return false;
         if (floor && (blockFace == BlockFace.UP || blockBelow.getType().isSolid())) return false;
         if (roof && blockFace == BlockFace.DOWN) return false;
         return !roof || !blockAbove.getType().isSolid();

@@ -27,7 +27,6 @@ public enum Settings {
     FORMAT_SIGNS("Plugin.formatting.signs"),
     FORMAT_CHAT("Plugin.formatting.chat"),
     FORMAT_BOOKS("Plugin.formatting.books"),
-    NMS_BLOCK_CORRECTION("Plugin.experimental.nms.block_correction"),
 
     // Config Tools
     CONFIGS_VERSION("configs_version"),
@@ -43,6 +42,9 @@ public enum Settings {
 
     DISABLE_LEATHER_REPAIR_CUSTOM("CustomArmor.disable_leather_repair"),
     CUSTOM_ARMOR_SHADER_TYPE("CustomArmor.shader_type"),
+
+    // Custom Blocks
+    BLOCK_CORRECTION("CustomBlocks.block_correction"),
 
     // ItemUpdater
     UPDATE_ITEMS("ItemUpdater.update_items"),
